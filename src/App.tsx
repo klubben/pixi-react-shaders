@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { BasicOutlineSettings } from "./filters/basicOutlineSettings.tsx";
 import { BlotchyAura } from "./filters/blotchyAura.ts";
 import { BlotchyAuraSettings } from "./filters/blotchyAuraSettings.tsx";
+import { Fps } from "./components/fps.tsx";
 
 const filters = {
   BasicOutline: {
@@ -53,6 +54,8 @@ const App = () => {
         />
       </Stage>
       <Flex vertical gap="middle" style={{ width: "400px", flex: "1 1 auto" }}>
+        <Fps />
+
         <Select
           defaultValue="BasicOutline"
           onChange={setCurrentFilter}
