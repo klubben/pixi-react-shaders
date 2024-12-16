@@ -1,3 +1,7 @@
+/**
+ Ported from https://godotshaders.com/shader/various-canvas-outlines/
+**/
+
 precision mediump float;
 varying vec2 vTextureCoord;
 varying vec4 vOutputFrame;
