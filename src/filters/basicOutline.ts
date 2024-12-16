@@ -28,6 +28,7 @@ export class BasicOutline extends Filter {
     }
 
     this.update = this.update.bind(this);
+    this.updateUniforms = this.updateUniforms.bind(this);
     Ticker.shared.add(this.update);
   }
 

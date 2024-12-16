@@ -1,35 +1,35 @@
 import "./App.css";
 import { Sprite, Stage } from "@pixi/react";
 import { BasicOutline } from "./filters/basicOutline.ts";
-import { ColorPicker, Flex } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { AggregationColor } from "antd/es/color-picker/color";
-import { SliderInput } from "./components/sliderInput.tsx";
-import { BooleanInput } from "./components/booleanInput.tsx";
+import { Flex, Select } from "antd";
+import { useMemo, useState } from "react";
+import { BasicOutlineSettings } from "./filters/basicOutlineSettings.tsx";
+import { BlotchyAura } from "./filters/blotchyAura.ts";
+import { BlotchyAuraSettings } from "./filters/blotchyAuraSettings.tsx";
+
+const filters = {
+  BasicOutline: {
+    class: BasicOutline,
+    settings: BasicOutlineSettings,
+  },
+  BlotchyAura: {
+    class: BlotchyAura,
+    settings: BlotchyAuraSettings,
+  },
+};
 
 const App = () => {
   const front = "/card-front.png";
   const creature = "/creature.png";
+  const [currentFilter, setCurrentFilter] =
+    useState<keyof typeof filters>("BasicOutline");
 
-  const filter = useMemo(() => new BasicOutline(), []);
+  const filter = useMemo(
+    () => new filters[currentFilter].class(),
+    [currentFilter],
+  );
 
-  const [color, setColor] = useState(new AggregationColor("#ffffff"));
-  const [thickness, setThickness] = useState(20);
-  const [tolerance, setTolerance] = useState(0);
-  const [diagonals, setDiagonals] = useState(true);
-  const [rounded, setRounded] = useState(true);
-
-  useEffect(() => {
-    const parts = color.toRgb();
-
-    filter.updateUniforms({
-      color: [parts.r / 255, parts.g / 255, parts.b / 255, 1 / parts.a],
-      thickness,
-      tolerance,
-      diagonals,
-      rounded,
-    });
-  }, [color, diagonals, filter, rounded, thickness, tolerance]);
+  const Settings = filters[currentFilter].settings;
 
   return (
     <Flex gap={20}>
@@ -42,7 +42,6 @@ const App = () => {
           height={300 * (1090 / 769)}
           filters={[filter]}
           interactive={true}
-          pointerdown={() => filter.printUniforms()}
         />
         <Sprite
           image={creature}
@@ -54,41 +53,16 @@ const App = () => {
         />
       </Stage>
       <Flex vertical gap="middle" style={{ width: "400px", flex: "1 1 auto" }}>
-        <Flex vertical>
-          Color:
-          <div>
-            <ColorPicker value={color} onChange={setColor} />
-          </div>
-        </Flex>
-
-        <SliderInput
-          title={"Thickness"}
-          value={thickness}
-          onChange={setThickness}
-          min={0}
-          max={100}
+        <Select
+          defaultValue="BasicOutline"
+          onChange={setCurrentFilter}
+          options={Object.keys(filters).map((key) => ({
+            label: key,
+            value: key,
+          }))}
         />
 
-        <SliderInput
-          title={"Tolerance"}
-          value={tolerance}
-          onChange={setTolerance}
-          min={0}
-          max={1}
-          step={0.05}
-        />
-
-        <BooleanInput
-          title={"Diagonals"}
-          checked={diagonals}
-          onChange={setDiagonals}
-        />
-
-        <BooleanInput
-          title={"Rounded"}
-          checked={rounded}
-          onChange={setRounded}
-        />
+        <Settings update={filter.updateUniforms} />
       </Flex>
     </Flex>
   );
