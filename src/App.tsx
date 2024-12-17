@@ -1,21 +1,46 @@
 import "./App.css";
 import { Sprite, Stage } from "@pixi/react";
-import { BasicOutline } from "./filters/basicOutline.ts";
 import { Flex, Select } from "antd";
 import { useMemo, useState } from "react";
-import { BasicOutlineSettings } from "./filters/basicOutlineSettings.tsx";
-import { BlotchyAura } from "./filters/blotchyAura.ts";
-import { BlotchyAuraSettings } from "./filters/blotchyAuraSettings.tsx";
 import { Fps } from "./components/fps.tsx";
+import { FilterConfig, UniformType } from "./types.ts";
 
-const filters = {
+import blotchyAura from "./filters/blotchyAura.frag";
+import basicOutline from "./filters/basicOutline.frag";
+import { CustomFilter } from "./filters/customFilter.ts";
+import { Settings } from "./components/settings.tsx";
+
+const filters: Record<string, FilterConfig> = {
   BasicOutline: {
-    class: BasicOutline,
-    settings: BasicOutlineSettings,
+    shader: basicOutline,
+    uniforms: {
+      color: { type: UniformType.Color, default: [1, 0, 0, 1] },
+      thickness: { type: UniformType.Number, default: 20, range: [0, 100] },
+      tolerance: {
+        type: UniformType.Number,
+        default: 0,
+        range: [0, 1],
+        step: 0.05,
+      },
+      diagonals: { type: UniformType.Boolean, default: true },
+      rounded: { type: UniformType.Boolean, default: true },
+    },
   },
   BlotchyAura: {
-    class: BlotchyAura,
-    settings: BlotchyAuraSettings,
+    shader: blotchyAura,
+    uniforms: {
+      color: { type: UniformType.Color, default: [1, 0, 0, 1] },
+      maxLineWidth: { type: UniformType.Number, default: 10, range: [0, 100] },
+      minLineWidth: { type: UniformType.Number, default: 5, range: [0, 100] },
+      speed: { type: UniformType.Number, default: 1, range: [0, 10] },
+      blockSize: { type: UniformType.Number, default: 20, range: [0.001, 100] },
+      tolerance: {
+        type: UniformType.Number,
+        default: 0,
+        range: [0, 0.999],
+        step: 0.05,
+      },
+    },
   },
 };
 
@@ -25,12 +50,10 @@ const App = () => {
   const [currentFilter, setCurrentFilter] =
     useState<keyof typeof filters>("BasicOutline");
 
-  const filter = useMemo(
-    () => new filters[currentFilter].class(),
-    [currentFilter],
-  );
-
-  const Settings = filters[currentFilter].settings;
+  const filter = useMemo(() => {
+    console.log(currentFilter);
+    return new CustomFilter(filters[currentFilter]);
+  }, [currentFilter]);
 
   return (
     <Flex gap={20}>
@@ -53,6 +76,7 @@ const App = () => {
           filters={[filter]}
         />
       </Stage>
+
       <Flex vertical gap="middle" style={{ width: "400px", flex: "1 1 auto" }}>
         <Fps />
 
@@ -65,7 +89,10 @@ const App = () => {
           }))}
         />
 
-        <Settings update={filter.updateUniforms} />
+        <Settings
+          update={filter.updateUniforms}
+          uniforms={filters[currentFilter].uniforms}
+        />
       </Flex>
     </Flex>
   );
