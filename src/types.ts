@@ -23,5 +23,6 @@ export type FilterConfig = {
 export const imageMap = {
   gradient: "/gradient.png",
   gradient2: "/gradient2.png",
+  perlin: "/perlin.png",
   random: "https://picsum.photos/256/256",
 };

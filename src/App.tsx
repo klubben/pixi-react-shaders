@@ -9,11 +9,15 @@ import { Settings } from "./components/settings.tsx";
 import { basicOutline } from "./filters/basicOutline.ts";
 import { blotchyAura } from "./filters/blotchyAura.ts";
 import { gradientOutline } from "./filters/gradientOutline.ts";
+import { allInOne } from "./filters/allInOne.ts";
+import { jigglyOutline } from "./filters/jigglyOutline.ts";
 
 const filters: Record<string, FilterConfig> = {
   BasicOutline: basicOutline,
   BlotchyAura: blotchyAura,
   GradientOutline: gradientOutline,
+  AllInOne: allInOne,
+  JigglyOutline: jigglyOutline,
 };
 
 const App = () => {
