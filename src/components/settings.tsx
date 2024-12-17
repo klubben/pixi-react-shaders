@@ -2,6 +2,7 @@ import { FilterConfig, UniformDict, UniformType } from "../types.ts";
 import { Color } from "./color.tsx";
 import { BooleanInput } from "./booleanInput.tsx";
 import { SliderInput } from "./sliderInput.tsx";
+import { Texture } from "./texture.tsx";
 
 type Props = {
   update: (uniforms: UniformDict) => void;
@@ -47,6 +48,17 @@ export const Settings = ({ update, uniforms }: Props) => {
                 min={uniform.range?.[0]}
                 max={uniform.range?.[1]}
                 step={uniform.step}
+              />
+            );
+          }
+
+          case UniformType.Texture: {
+            return (
+              <Texture
+                key={name}
+                name={name}
+                update={update}
+                defaultValue={uniform.default as string}
               />
             );
           }

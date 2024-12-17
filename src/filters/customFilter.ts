@@ -1,6 +1,8 @@
-import { FilterConfig, UniformDict } from "../types.ts";
+import { FilterConfig, imageMap, UniformDict } from "../types.ts";
 import vertexShader from "./default.vert";
-import { Filter, Ticker } from "pixi.js";
+import { Filter, Resource, Texture, Ticker } from "pixi.js";
+
+const textures: Record<string, Texture<Resource>> = {};
 
 export class CustomFilter extends Filter {
   constructor({ shader, uniforms }: FilterConfig) {
@@ -29,7 +31,17 @@ export class CustomFilter extends Filter {
   updateUniforms(uniforms: UniformDict) {
     for (const key in uniforms) {
       if (uniforms[key] !== undefined) {
-        this.uniforms[key] = uniforms[key];
+        if (typeof uniforms[key] === "string") {
+          if (!textures[uniforms[key]]) {
+            textures[uniforms[key]] = Texture.from(
+              imageMap[uniforms[key] as keyof typeof imageMap],
+            );
+          }
+
+          this.uniforms[key] = textures[uniforms[key]];
+        } else {
+          this.uniforms[key] = uniforms[key];
+        }
       }
     }
   }

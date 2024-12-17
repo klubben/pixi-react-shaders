@@ -3,45 +3,17 @@ import { Sprite, Stage } from "@pixi/react";
 import { Flex, Select } from "antd";
 import { useMemo, useState } from "react";
 import { Fps } from "./components/fps.tsx";
-import { FilterConfig, UniformType } from "./types.ts";
-
-import blotchyAura from "./filters/blotchyAura.frag";
-import basicOutline from "./filters/basicOutline.frag";
+import { FilterConfig } from "./types.ts";
 import { CustomFilter } from "./filters/customFilter.ts";
 import { Settings } from "./components/settings.tsx";
+import { basicOutline } from "./filters/basicOutline.ts";
+import { blotchyAura } from "./filters/blotchyAura.ts";
+import { gradientOutline } from "./filters/gradientOutline.ts";
 
 const filters: Record<string, FilterConfig> = {
-  BasicOutline: {
-    shader: basicOutline,
-    uniforms: {
-      color: { type: UniformType.Color, default: [1, 0, 0, 1] },
-      thickness: { type: UniformType.Number, default: 20, range: [0, 100] },
-      tolerance: {
-        type: UniformType.Number,
-        default: 0,
-        range: [0, 1],
-        step: 0.05,
-      },
-      diagonals: { type: UniformType.Boolean, default: true },
-      rounded: { type: UniformType.Boolean, default: true },
-    },
-  },
-  BlotchyAura: {
-    shader: blotchyAura,
-    uniforms: {
-      color: { type: UniformType.Color, default: [1, 0, 0, 1] },
-      maxLineWidth: { type: UniformType.Number, default: 10, range: [0, 100] },
-      minLineWidth: { type: UniformType.Number, default: 5, range: [0, 100] },
-      speed: { type: UniformType.Number, default: 1, range: [0, 10] },
-      blockSize: { type: UniformType.Number, default: 20, range: [0.001, 100] },
-      tolerance: {
-        type: UniformType.Number,
-        default: 0,
-        range: [0, 0.999],
-        step: 0.05,
-      },
-    },
-  },
+  BasicOutline: basicOutline,
+  BlotchyAura: blotchyAura,
+  GradientOutline: gradientOutline,
 };
 
 const App = () => {

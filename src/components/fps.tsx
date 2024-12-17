@@ -15,5 +15,5 @@ export const Fps = () => {
       Ticker.shared.remove(updateFps);
     };
   }, [updateFps]);
-  return <div>{fps}</div>;
+  return <div>FPS: {fps}</div>;
 };
