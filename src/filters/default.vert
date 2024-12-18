@@ -4,6 +4,7 @@ uniform mat3 projectionMatrix;
 
 varying vec2 vTextureCoord;
 varying vec4 vOutputFrame;
+varying vec4 vInputSize;
 
 uniform vec4 inputSize;
 uniform vec4 outputFrame;
@@ -25,4 +26,5 @@ void main(void)
     gl_Position = filterVertexPosition();
     vTextureCoord = filterTextureCoord();
     vOutputFrame = outputFrame;
+    vInputSize = inputSize;
 }

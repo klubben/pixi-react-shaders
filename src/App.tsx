@@ -11,8 +11,10 @@ import { blotchyAura } from "./filters/blotchyAura.ts";
 import { gradientOutline } from "./filters/gradientOutline.ts";
 import { allInOne } from "./filters/allInOne.ts";
 import { jigglyOutline } from "./filters/jigglyOutline.ts";
+import { circle } from "./filters/circle.ts";
 
 const filters: Record<string, FilterConfig> = {
+  Circle: circle,
   BasicOutline: basicOutline,
   BlotchyAura: blotchyAura,
   GradientOutline: gradientOutline,
@@ -23,8 +25,9 @@ const filters: Record<string, FilterConfig> = {
 const App = () => {
   const front = "/card-front.png";
   const creature = "/creature.png";
-  const [currentFilter, setCurrentFilter] =
-    useState<keyof typeof filters>("BasicOutline");
+  const [currentFilter, setCurrentFilter] = useState<keyof typeof filters>(
+    Object.keys(filters)[0],
+  );
 
   const filter = useMemo(() => {
     console.log(currentFilter);
@@ -49,6 +52,14 @@ const App = () => {
           y={100}
           width={300}
           height={300 * (659 / 548)}
+          filters={[filter]}
+        />
+        <Sprite
+          image={"/checkers.png"}
+          x={500}
+          y={500}
+          width={200}
+          height={200}
           filters={[filter]}
         />
       </Stage>

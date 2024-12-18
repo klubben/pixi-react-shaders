@@ -48,24 +48,37 @@ export const Texture = ({ name, defaultValue, update }: TextureProps) => {
         footer={null}
         onClose={closeModal}
         onCancel={closeModal}
+        width={"90%"}
       >
-        <Space>
+        <Space wrap>
           {Object.keys(imageMap).map((key) => (
-            <img
-              key={key}
-              src={imageMap[key as keyof typeof imageMap]}
-              width={150}
-              onClick={() => {
-                setValue(key);
-                handleTextureChange(key);
-                closeModal();
-              }}
+            <div
               style={{
-                cursor: "pointer",
-                border:
-                  key === value ? "5px solid aqua" : "5px solid transparent",
+                textAlign: "center",
+                padding: "6px",
+                border: key === value ? "5px solid #555" : "5px solid #aaa",
+                borderRadius: "5px",
               }}
-            />
+            >
+              <img
+                key={key}
+                src={imageMap[key as keyof typeof imageMap]}
+                width={150}
+                onClick={() => {
+                  setValue(key);
+                  handleTextureChange(key);
+                  closeModal();
+                }}
+                style={{
+                  cursor: "pointer",
+                  maxHeight: "150px",
+                  maxWidth: "150px",
+                  objectFit: "contain",
+                }}
+              />
+              <br />
+              {key}
+            </div>
           ))}
         </Space>
       </Modal>
