@@ -33,10 +33,14 @@ export const Texture = ({ name, defaultValue, update }: TextureProps) => {
     <Flex vertical>
       {name}:
       <img
-        width={150}
         src={imageMap[value as keyof typeof imageMap]}
         onClick={openModal}
-        style={{ cursor: "pointer" }}
+        style={{
+          cursor: "pointer",
+          maxHeight: "150px",
+          maxWidth: "150px",
+          objectFit: "contain",
+        }}
       />
       <Modal
         title="Basic Modal"

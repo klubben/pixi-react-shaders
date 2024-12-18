@@ -33,7 +33,7 @@ const App = () => {
 
   return (
     <Flex gap={20}>
-      <Stage width={1024} height={768} options={{ background: 0x1099bb }}>
+      <Stage width={1024} height={768} options={{ background: 0xffffff }}>
         <Sprite
           image={front}
           x={100}

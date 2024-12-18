@@ -1,12 +1,14 @@
 /**
    havely influensed by https://godotshaders.com/shader/animated-and-gradient-outlines/
 */
+#define EPSILON 0.001
 
+precision mediump float;
 varying vec2 vTextureCoord;
 varying vec4 vOutputFrame;
 uniform float time;
 uniform sampler2D uSampler;
-uniform sampler2D noiseTexture;
+uniform sampler2D gradient_texture;
 
 uniform float max_line_width;
 uniform float min_line_width;
@@ -18,27 +20,6 @@ uniform vec4 ending_colour;
 const float pi = 3.1415;
 const int ang_res = 16;
 const int grad_res = 8;
-
-float hash(vec2 p, float s) {
-    return fract(35.1 * sin(dot(vec3(112.3, 459.2, 753.2), vec3(p, s))));
-}
-
-float noise() {
-    return sin(time / 2.0 + vTextureCoord.y * 10.0) * 0.5 + 0.5;
-}
-
-float getLineWidth(vec2 p, float s) {
-    p /= block_size;
-    float w = 0.0;
-    float intensity = 1.0;
-    for (int i = 0; i < 3; i++) {
-        w = mix(w, noise(), intensity);
-        p /= 2.0;
-        intensity /= 2.0;
-    }
-
-    return mix(max_line_width, min_line_width, w);
-}
 
 bool pixelInRange(sampler2D text, vec2 uv, vec2 dist) {
     float alpha = 0.0;
@@ -65,20 +46,23 @@ float getClosestDistance(sampler2D text, vec2 uv, vec2 maxDist) {
         }
     }
     return hi;
+}
 
+bool eq(float a, float b) {
+    return abs(a - b) < EPSILON;
 }
 
 void main() {
     vec2 TEXTURE_PIXEL_SIZE = 1.0 / vOutputFrame.ba;
     float timeStep = floor(freq * time);
     vec2 scaledDist = TEXTURE_PIXEL_SIZE;
-    scaledDist *= getLineWidth(vTextureCoord / TEXTURE_PIXEL_SIZE, timeStep);
+    scaledDist *= max_line_width;
     float w = getClosestDistance(uSampler, vTextureCoord, scaledDist);
-
+    
     if ((w > 0.0) && (texture2D(uSampler, vTextureCoord).a < 0.2)) {
-        gl_FragColor = mix(starting_colour, ending_colour, sin(w));
-    }
-    else {
+        float dir = vTextureCoord.x > 0.5 ? 1.0 : -1.0;
+        gl_FragColor = texture2D(gradient_texture, vec2(sin(w) * 0.5 + 0.5, cos(vTextureCoord.y + time / 30.0 * dir) * 0.5 + 0.5));
+    } else {
         gl_FragColor = texture2D(uSampler, vTextureCoord);
     }
 
