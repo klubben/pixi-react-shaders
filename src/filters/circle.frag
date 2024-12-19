@@ -1,12 +1,12 @@
 /**
-   havely influensed by https://godotshaders.com/shader/animated-and-gradient-outlines/
+    pixelInRange and getClosestDistance from  https://godotshaders.com/shader/animated-and-gradient-outlines/
 */
-#define EPSILON 0.003
-
 precision mediump float;
 in vec2 vTextureCoord;
+in vec2 vFilterCoord;
 in vec4 vOutputFrame;
 in vec4 vInputSize;
+
 uniform float time;
 uniform sampler2D uSampler;
 uniform sampler2D gradient_texture;
@@ -62,13 +62,10 @@ void main() {
     float w = getClosestDistance(uSampler, vTextureCoord, scaledDist);
 
     if ((w > 0.0) && (texture(uSampler, vTextureCoord).a < 0.2)) {
-        vec2 outlineCoord = vec2(w, atan(vTextureCoord.y - .5, vTextureCoord.x - .5) / pi * .5 + .5);
+        vec2 outlineCoord = vec2(w, atan(vFilterCoord.y - .5, vFilterCoord.x - .5) / pi * .5 + .5);
         outlineCoord.y = fract(outlineCoord.y + time / freq);
 
-        vec4 outlineColor = texture(gradient_texture, outlineCoord);
-        fragColor = mix(ending_colour, starting_colour, outlineColor.g);
-        fragColor *= outlineColor.a / fragColor.a;
-
+        fragColor = texture(gradient_texture, outlineCoord);
     } else {
         fragColor = texture(uSampler, vTextureCoord);
     }

@@ -5,6 +5,7 @@ uniform mat3 projectionMatrix;
 out vec2 vTextureCoord;
 out vec4 vOutputFrame;
 out vec4 vInputSize;
+out vec2 vFilterCoord;
 
 uniform vec4 inputSize;
 uniform vec4 outputFrame;
@@ -27,4 +28,5 @@ void main(void)
     vTextureCoord = filterTextureCoord();
     vOutputFrame = outputFrame;
     vInputSize = inputSize;
+    vFilterCoord = filterTextureCoord() * inputSize.xy / outputFrame.zw;
 }
