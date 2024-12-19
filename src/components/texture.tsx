@@ -53,6 +53,7 @@ export const Texture = ({ name, defaultValue, update }: TextureProps) => {
         <Space wrap>
           {Object.keys(imageMap).map((key) => (
             <div
+              key={key}
               style={{
                 textAlign: "center",
                 padding: "6px",
@@ -61,7 +62,6 @@ export const Texture = ({ name, defaultValue, update }: TextureProps) => {
               }}
             >
               <img
-                key={key}
                 src={imageMap[key as keyof typeof imageMap]}
                 width={150}
                 onClick={() => {

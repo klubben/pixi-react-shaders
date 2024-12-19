@@ -1,10 +1,10 @@
-attribute vec2 aVertexPosition;
+in vec2 aVertexPosition;
 
 uniform mat3 projectionMatrix;
 
-varying vec2 vTextureCoord;
-varying vec4 vOutputFrame;
-varying vec4 vInputSize;
+out vec2 vTextureCoord;
+out vec4 vOutputFrame;
+out vec4 vInputSize;
 
 uniform vec4 inputSize;
 uniform vec4 outputFrame;

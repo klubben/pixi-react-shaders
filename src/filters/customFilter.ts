@@ -8,6 +8,12 @@ export class CustomFilter extends Filter {
   constructor({ shader, uniforms }: FilterConfig) {
     super(vertexShader, shader);
 
+    if (!this.program.fragmentSrc.includes("#version 300 es")) {
+      this.program.vertexSrc = "#version 300 es \n" + this.program.vertexSrc;
+      this.program.fragmentSrc =
+        "#version 300 es \n" + this.program.fragmentSrc;
+    }
+
     this.updateUniforms(
       Object.fromEntries(
         Object.entries(uniforms).map(([key, value]) => [key, value.default]),

@@ -31,4 +31,5 @@ export const imageMap = {
   outline3: "/outline3.png",
   outline3_marked: "/outline3_marked.png",
   gradient4: "/gradient4.png",
+  transparent: "/transparent.png",
 };

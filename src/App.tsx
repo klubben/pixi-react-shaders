@@ -1,5 +1,5 @@
 import "./App.css";
-import { Sprite, Stage } from "@pixi/react";
+import { Sprite, Stage, TilingSprite } from "@pixi/react";
 import { Flex, Select } from "antd";
 import { useMemo, useState } from "react";
 import { Fps } from "./components/fps.tsx";
@@ -36,7 +36,8 @@ const App = () => {
 
   return (
     <Flex gap={20}>
-      <Stage width={1024} height={768} options={{ background: 0xffffff }}>
+      <Stage width={1024} height={768}>
+        <TilingSprite image={"/transparent.png"} width={1024} height={768} />
         <Sprite
           image={front}
           x={100}

@@ -4,9 +4,9 @@
 #define EPSILON 0.003
 
 precision mediump float;
-varying vec2 vTextureCoord;
-varying vec4 vOutputFrame;
-varying vec4 vInputSize;
+in vec2 vTextureCoord;
+in vec4 vOutputFrame;
+in vec4 vInputSize;
 uniform float time;
 uniform sampler2D uSampler;
 uniform sampler2D gradient_texture;
@@ -19,15 +19,17 @@ uniform vec4 starting_colour;
 uniform vec4 ending_colour;
 
 const float pi = 3.14159265359;
-const int ang_res = 16;
+const int ang_res = 64;
 const int grad_res = 16;
+
+out vec4 fragColor;
 
 bool pixelInRange(sampler2D text, vec2 uv, vec2 dist) {
     float alpha = 0.0;
     for (int i = 0; i < ang_res; i++) {
         float angle = 2.0 * pi * float(i) / float(ang_res);
         vec2 disp = dist * vec2(cos(angle), sin(angle));
-        if (texture2D(text, uv + disp).a > 0.0) return true;
+        if (texture(text, uv + disp).a > 0.0) return true;
     }
     return false;
 }
@@ -53,41 +55,21 @@ float getClosestDistance(sampler2D text, vec2 uv, vec2 maxDist) {
     return hi;
 }
 
-bool eq(float a, float b) {
-    return abs(a - b) < EPSILON;
-}
-
-vec2 mapCoord(vec2 coord)
-{
-    coord *= vInputSize.xy;
-    return coord;
-}
-
 void main() {
     vec2 TEXTURE_PIXEL_SIZE = 1.0 / vOutputFrame.ba;
     vec2 scaledDist = TEXTURE_PIXEL_SIZE;
     scaledDist *= max_line_width;
     float w = getClosestDistance(uSampler, vTextureCoord, scaledDist);
 
-    vec2 mapped = vTextureCoord * vInputSize.xy;
+    if ((w > 0.0) && (texture(uSampler, vTextureCoord).a < 0.2)) {
+        vec2 outlineCoord = vec2(w, atan(vTextureCoord.y - .5, vTextureCoord.x - .5) / pi * .5 + .5);
+        outlineCoord.y = fract(outlineCoord.y + time / freq);
 
-    if (
-    eq(vTextureCoord.x, .0) ||
-    eq(vTextureCoord.y, .0) ||
-    eq(vTextureCoord.x, .5) ||
-    eq(vTextureCoord.y, .5) ||
-    eq(vTextureCoord.x, .9) ||
-    eq(vTextureCoord.y, .9)) {
-        gl_FragColor = vec4(1.0, .0, 1.0, 1.0);
-        return;
-    } else
-    if ((w > 0.0) && (texture2D(uSampler, vTextureCoord).a < 0.2)) {
-        float x = w;
-        float y = atan(vTextureCoord.y - .5, vTextureCoord.x - .5) / pi * .5 + .5;
-        y = fract(y + time / freq);
-        gl_FragColor = texture2D(gradient_texture, vec2(x, y));
+        vec4 outlineColor = texture(gradient_texture, outlineCoord);
+        fragColor = mix(ending_colour, starting_colour, outlineColor.g);
+        fragColor *= outlineColor.a / fragColor.a;
+
     } else {
-
-        gl_FragColor = texture2D(uSampler, vTextureCoord);
+        fragColor = texture(uSampler, vTextureCoord);
     }
 }
